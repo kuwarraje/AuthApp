@@ -1,0 +1,163 @@
+@model AuthApp.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <div class="auth-logo-icon">🚀</div>
+            <span class="auth-logo-text">AuthApp</span>
+        </div>
+
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-subtitle">Join us today — it's completely free</p>
+
+        <!-- Validation Summary -->
+        <div asp-validation-summary="All" class="validation-summary-errors" id="registerValidationSummary"></div>
+
+        <form asp-action="Register" asp-controller="Account" method="post" id="registerForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label asp-for="FullName" class="form-label">Full Name</label>
+                <div class="input-wrapper">
+                    <input asp-for="FullName"
+                           id="fullName"
+                           type="text"
+                           class="form-control"
+                           placeholder="John Doe"
+                           autocomplete="name" />
+                    <span class="input-icon">👤</span>
+                </div>
+                <span asp-validation-for="FullName" class="field-validation-error"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">Email Address</label>
+                <div class="input-wrapper">
+                    <input asp-for="Email"
+                           id="registerEmail"
+                           type="email"
+                           class="form-control"
+                           placeholder="you@example.com"
+                           autocomplete="email" />
+                    <span class="input-icon">✉️</span>
+                </div>
+                <span asp-validation-for="Email" class="field-validation-error"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label asp-for="Password" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input asp-for="Password"
+                           id="registerPassword"
+                           type="password"
+                           class="form-control"
+                           placeholder="Min. 6 characters"
+                           autocomplete="new-password" />
+                    <span class="input-icon">🔒</span>
+                    <button type="button" class="toggle-password" id="toggleRegPassword" aria-label="Toggle password">👁️</button>
+                </div>
+                <span asp-validation-for="Password" class="field-validation-error"></span>
+                <!-- Strength meter -->
+                <div class="password-strength" id="strengthBars">
+                    <div class="strength-bar" id="bar1"></div>
+                    <div class="strength-bar" id="bar2"></div>
+                    <div class="strength-bar" id="bar3"></div>
+                    <div class="strength-bar" id="bar4"></div>
+                </div>
+                <div class="strength-label" id="strengthLabel"></div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <div class="input-wrapper">
+                    <input asp-for="ConfirmPassword"
+                           id="confirmPassword"
+                           type="password"
+                           class="form-control"
+                           placeholder="Repeat your password"
+                           autocomplete="new-password" />
+                    <span class="input-icon">✔️</span>
+                    <button type="button" class="toggle-password" id="toggleConfirmPassword" aria-label="Toggle confirm password">👁️</button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+            </div>
+
+            <button type="submit" class="btn-auth" id="registerSubmitBtn" style="margin-top:0.5rem;">
+                Create Account →
+            </button>
+        </form>
+
+        <div class="auth-divider">or</div>
+
+        <p class="auth-redirect">
+            Already have an account?
+            <a href="/Account/Login" class="auth-link" id="goToLoginLink">Sign in</a>
+        </p>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Toggle password fields
+        function makeToggle(btnId, inputId) {
+            document.getElementById(btnId).addEventListener('click', function () {
+                const input = document.getElementById(inputId);
+                const isPass = input.type === 'password';
+                input.type = isPass ? 'text' : 'password';
+                this.textContent = isPass ? '🙈' : '👁️';
+            });
+        }
+        makeToggle('toggleRegPassword', 'registerPassword');
+        makeToggle('toggleConfirmPassword', 'confirmPassword');
+
+        // Password strength meter
+        const pwdInput = document.getElementById('registerPassword');
+        const bars = [document.getElementById('bar1'), document.getElementById('bar2'),
+                      document.getElementById('bar3'), document.getElementById('bar4')];
+        const strengthLabel = document.getElementById('strengthLabel');
+        const levels = [
+            { label: 'Weak',   color: 'active-weak',   bars: 1 },
+            { label: 'Fair',   color: 'active-fair',   bars: 2 },
+            { label: 'Good',   color: 'active-good',   bars: 3 },
+            { label: 'Strong', color: 'active-strong', bars: 4 },
+        ];
+
+        function scorePassword(pwd) {
+            let score = 0;
+            if (pwd.length >= 6) score++;
+            if (pwd.length >= 10) score++;
+            if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
+            if (/\d/.test(pwd) || /[^A-Za-z0-9]/.test(pwd)) score++;
+            return Math.min(score, 4);
+        }
+
+        pwdInput.addEventListener('input', function () {
+            const score = this.value.length === 0 ? 0 : scorePassword(this.value);
+            bars.forEach((b, i) => {
+                b.className = 'strength-bar';
+                if (score > 0 && i < score) {
+                    b.classList.add(levels[score - 1].color);
+                }
+            });
+            strengthLabel.textContent = score > 0 ? levels[score - 1].label : '';
+            const colors = ['', '#f87171', '#fb923c', '#facc15', '#10b981'];
+            strengthLabel.style.color = colors[score] || '';
+        });
+
+        // Hide empty validation summary
+        const vs = document.getElementById('registerValidationSummary');
+        if (vs && vs.querySelectorAll('li').length === 0) vs.style.display = 'none';
+    </script>
+}

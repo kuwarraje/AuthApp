@@ -1,0 +1,28 @@
+# ── Build artifacts ──────────────────────────────────────────────
+obj/
+bin/
+
+# ── SQLite database (never bundle the local dev DB) ──────────────
+*.db
+*.db-shm
+*.db-wal
+
+# ── IDE / OS files ───────────────────────────────────────────────
+.vs/
+.vscode/
+*.user
+.DS_Store
+Thumbs.db
+
+# ── Git ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Docker itself ────────────────────────────────────────────────
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# ── Logs ─────────────────────────────────────────────────────────
+logs/
+*.log

@@ -1,0 +1,25 @@
+# ── Build output ──────────────────────────────────────────────────
+bin/
+obj/
+
+# ── SQLite database (local dev only, never commit) ────────────────
+*.db
+*.db-shm
+*.db-wal
+
+# ── User secrets / keys ───────────────────────────────────────────
+*.pfx
+*.key
+appsettings.Development.json
+
+# ── IDE / OS files ────────────────────────────────────────────────
+.vs/
+.vscode/
+*.user
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ─────────────────────────────────────────────────────────
+logs/
+*.log

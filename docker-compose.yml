@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  authapp:
+    image: authapp:latest          # uses locally built image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: authapp
+    restart: unless-stopped
+    ports:
+      - "8080:80"                  # host port 8080 → container port 80
+    volumes:
+      - authapp_data:/app/data     # persist SQLite database
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/Account/Login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  authapp_data:
+    driver: local

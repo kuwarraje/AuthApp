@@ -1,0 +1,111 @@
+@model AuthApp.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <div class="auth-logo-icon">🔐</div>
+            <span class="auth-logo-text">AuthApp</span>
+        </div>
+
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Sign in to continue to your account</p>
+
+        <!-- Flash Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-auth success">
+                <span>✅</span>
+                <span>@TempData["SuccessMessage"]</span>
+            </div>
+        }
+
+        <!-- Validation Summary -->
+        <div asp-validation-summary="All" class="validation-summary-errors" id="loginValidationSummary"></div>
+
+        <form asp-action="Login" asp-controller="Account" method="post" id="loginForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- Email -->
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">Email Address</label>
+                <div class="input-wrapper">
+                    <input asp-for="Email"
+                           id="loginEmail"
+                           type="email"
+                           class="form-control"
+                           placeholder="you@example.com"
+                           autocomplete="email" />
+                    <span class="input-icon">✉️</span>
+                </div>
+                <span asp-validation-for="Email" class="field-validation-error"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label asp-for="Password" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input asp-for="Password"
+                           id="loginPassword"
+                           type="password"
+                           class="form-control"
+                           placeholder="••••••••"
+                           autocomplete="current-password" />
+                    <span class="input-icon">🔒</span>
+                    <button type="button" class="toggle-password" id="toggleLoginPassword" aria-label="Toggle password visibility">👁️</button>
+                </div>
+                <span asp-validation-for="Password" class="field-validation-error"></span>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="form-check">
+                <input asp-for="RememberMe" id="rememberMe" class="form-check-input" type="checkbox" />
+                <label asp-for="RememberMe" class="form-check-label">Keep me signed in</label>
+            </div>
+
+            <button type="submit" class="btn-auth" id="loginSubmitBtn">
+                Sign In →
+            </button>
+        </form>
+
+        <div class="auth-divider">or</div>
+
+        <p class="auth-redirect">
+            Don't have an account?
+            <a href="/Account/Register" class="auth-link" id="goToRegisterLink">Create one free</a>
+        </p>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Toggle password visibility
+        document.getElementById('toggleLoginPassword').addEventListener('click', function () {
+            const input = document.getElementById('loginPassword');
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            this.textContent = isPassword ? '🙈' : '👁️';
+        });
+
+        // Add is-invalid class from validation
+        document.querySelectorAll('.field-validation-error').forEach(el => {
+            const observer = new MutationObserver(() => {
+                const input = el.closest('.form-group')?.querySelector('.form-control');
+                if (el.textContent.trim() && input) input.classList.add('is-invalid');
+                else if (input) input.classList.remove('is-invalid');
+            });
+            observer.observe(el, { childList: true, subtree: true, characterData: true });
+        });
+
+        // Hide empty validation summary
+        const vs = document.getElementById('loginValidationSummary');
+        if (vs && vs.querySelectorAll('li').length === 0) vs.style.display = 'none';
+    </script>
+}

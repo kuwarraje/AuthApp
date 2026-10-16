@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userName = ViewBag.UserName as string ?? "User";
+    var userEmail = ViewBag.UserEmail as string ?? "";
+    var initial = userName.Length > 0 ? userName[0].ToString().ToUpper() : "U";
+    var hour = DateTime.Now.Hour;
+    var greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+}
+
+<div class="dashboard-page">
+    <!-- Navigation -->
+    <nav class="dash-nav">
+        <div class="dash-nav-brand">
+            <span>🔐</span>
+            <span>AuthApp</span>
+        </div>
+        <div class="dash-nav-user">
+            <div class="user-avatar" title="@userName">@initial</div>
+            <a href="/Account/Logout" class="btn-logout" id="logoutBtn">
+                <span>⏻</span> Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dash-content">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-title">@greeting, @userName! 👋</div>
+            <div class="welcome-subtitle">You're successfully logged in as <strong style="color: var(--clr-primary-light);">@userEmail</strong></div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value">Active</div>
+                <div class="stat-label">Account Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛡️</div>
+                <div class="stat-value">Secured</div>
+                <div class="stat-label">Password Encrypted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value">@DateTime.Now.ToString("MMM dd")</div>
+                <div class="stat-label">Today's Date</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value">.NET 9</div>
+                <div class="stat-label">Powered By</div>
+            </div>
+        </div>
+    </main>
+</div>
